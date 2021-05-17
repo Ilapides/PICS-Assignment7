@@ -7,7 +7,7 @@ class Transactions extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            prevTransactions: [],
+            existingTransactions: [],
             newDescription: '',
             newAmount: 0,
         };
@@ -19,9 +19,10 @@ class Transactions extends Component {
             method: 'GET',
         });
         const result = await response.json();
-        this.setState({ prevTransactions: result });
+        this.setState({ existingTransactions: result });
     };
 
+    // React lifecycle method to make API requests
     componentDidMount() {
         this.fetchRecords();
     }
@@ -51,9 +52,9 @@ class Transactions extends Component {
             amount: this.state.newAmount,
             date: new Date(Date.now()).toLocaleDateString(),
         };
-        let CopyPrevTransactions = [...this.state.prevTransactions, newTransaction];
+        let PriorTransactions = [...this.state.existingTransactions, newTransaction];
         this.props.ambihandler(this.state.newAmount, (this.props.recordType === 'Debits' ? -1 : 1));
-        this.setState({ prevTransactions: CopyPrevTransactions });
+        this.setState({ existingTransactions: PriorTransactions });
     };
 
     render() {
@@ -64,7 +65,7 @@ class Transactions extends Component {
                 <Header balance={this.props.balance} displayName={this.props.recordType} />
                 <div>
                     <ul>
-                        {this.state.prevTransactions.map((info) => (
+                        {this.state.existingTransactions.map((info) => (
                             <p>
                                 {'$' + info.amount + ' '}
                                 {info.description + ' '}
